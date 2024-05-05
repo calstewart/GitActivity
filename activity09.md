@@ -27,6 +27,7 @@ In this activity, you will be guided through a series of exercises to familiariz
 | git branch   | Creates, lists, or deletes branches within a repository. |
 | git checkout | Switches between different branches or restores files from the repository to the working directory. |
 | git merge    | Combines changes from one branch into another, integrating the changes and creating a new merge commit if necessary. |
+| git diff | displays the differences between the current state of the working directory and the index. |
 
 For further exploration, see the [git reference guide](https://git-scm.com/docs).
 
@@ -89,159 +90,57 @@ In this step you will merge your temp branch with your branch for merge. Switch 
 ```
 git merge <user_id>-temp-branch
 ```
-
-**Step 1. Create TWO branches**
-
-Once you have checked out the project, you need to create two branchs. Name these branches as follows replacing `%userid%` with your own TNTech issued userid.
-
+You will see that your merge failed. Run the following command to see the details of the conflict:
 ```
-git checkout -b "<%userid%-personal-branch>"
+git diff
 ```
-
+You should see an output similar to the following:
 ```
-git checkout -b "<%userid%-branch-for-merge>"
+++<<<<<<< HEAD
+ +name: cal
+ +date: 2024
+ +branch: branch-for-merge
+ +
+++=======
++ name: cal 
++ date: 2024
++ branch: temp-branch
+++>>>>>>> temp-branch
 ```
-
-Example names would be: testuser-personal-branch, testuser-branch-for-merge.  
-
-<br/><br/>
-**Step 2. Make sure to switch to the first branch**
-
+The lines between `<<<<<<< HEAD` and `=======` represent changes from the current branch (branch-for-merge), while the lines between `=======` and `>>>>>>> temp-branch` represent changes from the branch being merged (temp-branch). The conflict arises because both branches have made changes to the same section of the file. Resolving the conflict involves choosing which changes to keep or combining them appropriately. Use the following command to accept the value of the temp branch:
 ```
-git checkout "<%userid%-personal-branch>"
-git branch
+git checkout --theirs Assignment.txt
 ```
-It should show a * next to your branch name.
+Using --ours keeps the changes from the current branch (the branch you are merging into), while --theirs keeps the changes from the branch being merged. After using one of these commands to resolve the conflict for the specific file, you need to add and commit the changes to finalize the resolution. Use the commit message "resolved conflict with Assignment.txt". Finally, rerun the merge command and push.
 
+Login to GitHub on your browser. Navigate to the repository for this activity. On the top ribbon, you will see a "Insights" button. On the Insights page, there is a side ribbon with the option to view your repository's network. Take a screenshot of the network graph. It should look like the following, demonstrating that the temp-branch was merged successfully into the branch-for-merge.
+![result of merge](images/merge.png)
 
-**Step 3. Change and add a file**
-
-Once you have created a branch, it's time to make changes.
-
-- change the "Assignment" file. Include the following details: your name, change date, and the branch name
-- create a new file named "alice_in_wonderland.pdf". You can use this publicly available [file](https://www.gutenberg.org/files/11/old/11-pdf.pdf). If you can not download, create an empty file.
-
-<br/><br/>
-**Step 4. Check the status of the new file**
-
-Check and verify the file is not added to the repository. You can do this using "git status" command. The file shoud be shown in red.
+#### Step 4: deleting branches
+Next, you will delete the temporary branch since it has been merged successfully. To delete the branch, run the following command:
 ```
-git status
+git branch -d branchname
+```
+Run the `git branch` command to ensure that your deletion was successful. However, this only deletes the local copy of the branch. To remove the branch from your remote repository as well run the following command:
+```
+git push origin --delete branchname
 ```
 
-<br/><br/>
-**Step 5. Add the file to them**
-
-* Add this new file to git.
-```
-git add alice_in_wonderland.pdf
-```
-
-<br/><br/>
-**Step 6. Check the status of the new file**
-
-Check and verify the file is now in the repository. You can do this using "git status" command. The file should be green.
-```
-git status
-```
-
-<br/><br/>
-**Step 7. Commit the changes**
-
-Once you have added the file and verified it, commit the change.
-```
-git commit -m 'changed README, added alice in wonderland'
-```
-
-<br/><br/>
-**Step 8. Push to the remote repository**
-After committing, push the changes and the new branch to the remote repository.
-
-```
-git push --set-upstream origin <%your branch name>
-```
-You can find your branch name using 
-
-```
-git branch
-```
-
-## Section 2
-In this section, we learn to merge different branches.
-
-**Step 1:  Checkout the branch for merge**
-After pushing the new branch, checkout the other branch: "<%userid%-branch-for-merge>
-
-```
-git checkout "<%userid%-branch-for-merge>"
-```
-
-An example name would be: testuser-branch-for-merge.
-
-<br/><br/>
-**Step 2:  Modify the file**
-Once you have created this branch, 
-* change the "README" file. Include the following details: your name, change date, and the branch name
-
-
-<br/><br/>
-**Step 3: Commit the changes and push**
-Once you have changed the file, commit the change.
-```
-git commit -m 'changed README'
-git push --set-upstream origin "<%userid%-branch-for-merge>"
-
-```
-
-<br/><br/>
-**Step 4: Merge this branch with master**
-Merge this branch with the master branch.
+#### Step 5: merging with main
+Once your development is done, you should merge any working branches with main. In this activity you will only merge the branch-for-merge. Run the following commands to merge your branch into main. Since you did not develop on main, there are no conflicts to resolve.
 ```
 git checkout main
-git merge "<%userid%-branch-for-merge>"
-
-```
-
-<br/><br/>
-**Step 5: Push to the remote repository**
-After merging, push the changes to the remote repository.
-```
+git merge <user_id>-branch-for-merge
 git push origin main
 ```
+Reload the webpage displaying your network. Screenshot your network graph again. It should look like the following demonstrating that branch-for-merge and main have been merged and temp-branch has been successfully deleted.
+![result from delete and merge](images/deletemerge.jpg)
 
-<br/><br/>
-**Step 6: Remove the branch you were working on**
-First, remove the local branch
-```
-git branch -d "<%userid%-branch-for-merge>"
-
-```
-Then, remove the remote branch
-```
-git push origin :"<%userid%-branch-for-merge>"
-
-```
-
-
+At this point should have successfully completed the lab. If you are unfamiliar with Git, you should continue to explore the branches and investigate the differences between branches. For example, "branch" label the Assignment.txt file in main should still reflect the edits made in the temp-branch. Main should also display the Icarus file you added from branch-for-merge. While the still unmerged personal-branch should show a different value for the "branch" label in Assignment.txt and the Goblet file that was added. These differences can be explored in the command line, PyCharm, or your web browser.
 
 ## Turn-in
 
-By the end of the exercise, your gitlab repository will have two branches. One will be a branch with the README file and "alice_in_wonderland.pdf" in the assignment directory. The other branch will have just a README file in that directory.
+By the end of the exercise, your gitlab repository will have three branches. One is the unmerged person branch. The branch-for-merge, while merged with main was never deleted so should still be present. And of course, your main branch. 
 
-
-Take the following screenshots and include them in *one* pdf file.
-
-- Screenshot 1:
-In your GitHub repository, go to "Insights" -> "Network" on the left hand menu. Take a screenshot, and attach to the submission. It should show three commits and a graph showing the branches.
-
-- Screenshot 2: 
-In your GitHub repository, go to "Insights" -> "Network" on the left hand menu.
-It should show only two active branches.
-
-- Screenshot 3:
-In your GitHub repository, go to "Insights" -> "Network" on the left hand menu
-Select the source as ""<%userid%-personal-branch>" and the target as "Main". DO NOT reverse the source and the target. Press the compare button, take a screenshot, and attach it to your submission. 
-
-
-Put all three screenshots in a pdf file, name it according to the follwing format (%username%-screenshot.pdf) and submit to iLearn for the Activity 09 assignment.
+Your iLearn submission should include the link to your git repository as well as the two screenshots of your network at the different points in the assignment.
 
